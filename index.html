@@ -116,6 +116,44 @@ h2 { color: #8b5cf6; }
   0% { transform: rotate(-10deg); }
   100% { transform: rotate(10deg) translateY(-10px); }
 }
+
+/* 📱 Mobile optimization (iPhone fit) */
+@media (max-width: 480px) {
+
+  .card {
+    width: 92%;
+    padding: 18px; /* smaller spacing */
+    border-radius: 16px;
+  }
+
+  h2 {
+    font-size: 20px; /* slightly smaller */
+  }
+
+  p {
+    font-size: 14px;
+  }
+
+  .option-btn {
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+
+  .day {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .dance-avatar {
+    font-size: 48px;
+  }
+
+  .summary-card {
+    padding: 14px;
+    font-size: 14px;
+  }
+}
 </style>
 </head>
 
@@ -313,7 +351,6 @@ function pickActivity(act) {
 
     <div class="summary-item">
       <span class="summary-icon">💜</span>
-      <span>This is going to be such a cute day 🥺</span>
     </div>
   `;
 }
