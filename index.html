@@ -121,7 +121,7 @@ h2 { color: #8b5cf6; }
 @media (max-width: 480px) {
 
   .card {
-    width: 80%;
+    width: 75%;
     padding: 18px; /* smaller spacing */
     border-radius: 16px;
   }
@@ -195,7 +195,7 @@ h2 { color: #8b5cf6; }
 
 <!-- STEP 2 -->
 <div id="step2" style="display:none;">
-  <h2>Pick an activity 🎀</h2>
+  <h2>Pick an activity</h2>
   <button class="option-btn" onclick="pickActivity('Cafe ☕')">Cafe ☕</button>
   <button class="option-btn" onclick="pickActivity('Movie 🎬')">Movie 🎬</button>
   <button class="option-btn" onclick="pickActivity('Beach 🌊')">Beach 🌊</button>
@@ -203,14 +203,13 @@ h2 { color: #8b5cf6; }
 
 <!-- STEP 3 -->
 <div id="step3" style="display:none;">
-  <h2>Your plan 💜</h2>
+  <h2>Your plan</h2>
 
   <div id="summary" class="summary-card"></div>
 
   <button class="option-btn" onclick="goBackToActivity()">⬅️ Change activity</button>
   <button class="option-btn" onclick="goBackToCalendar()">📅 Change date</button>
-
-  <button class="option-btn" onclick="finalYes()">DONE ✅</button>
+  <button class="option-btn" onclick="finalYes()">DONE</button>
 </div>
 
 <!-- FINAL -->
