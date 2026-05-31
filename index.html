@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birthday Date Game 💖</title>
+<title>Birthday Date Game 💜</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -10,60 +10,68 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #ffe6f0, #fff0f5);
+  background: linear-gradient(135deg, #f3e8ff, #ede9fe);
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
 }
 
+/* SHAKE */
+.shake {
+  animation: shake 0.5s;
+}
+@keyframes shake {
+  0% { transform: translate(2px, 2px); }
+  50% { transform: translate(-4px, -2px); }
+  100% { transform: translate(2px, 2px); }
+}
+
+/* ERROR MODE */
+.error-mode {
+  background: #e9e5f5 !important;
+  filter: grayscale(100%);
+}
+
 /* CARD */
 .card {
   width: 90%;
   max-width: 420px;
-  background: white;
+  background: #faf5ff;
   border-radius: 20px;
   padding: 25px;
   text-align: center;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-/* TEXT */
-h2 { color: #ff4d88; }
-p { color: #444; }
+.summary-card {
+  background: linear-gradient(135deg, #ede9fe, #f5f3ff);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 15px 0;
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
+  text-align: left;
+  font-size: 16px;
+  line-height: 1.6;
+}
 
-/* BUTTONS */
+
+/* TEXT */
+h2 { color: #8b5cf6; }
+
+/* BUTTON */
 .option-btn {
-  display: block;
   width: 100%;
   margin: 10px 0;
   padding: 15px;
   border-radius: 15px;
   border: none;
-  font-size: 16px;
-  background: #ff6fa1;
+  background: #a78bfa;
   color: white;
-  transition: 0.2s;
-}
-
-.option-btn:active {
-  transform: scale(0.97);
-}
-
-/* PROGRESS */
-.progress {
-  height: 8px;
-  background: #eee;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  overflow: hidden;
-}
-
-.bar {
-  height: 100%;
-  width: 0%;
-  background: #ff6fa1;
+  font-size: 16px;
   transition: 0.3s;
+}
+.option-btn:hover {
+  background: #8b5cf6;
 }
 
 /* CALENDAR */
@@ -71,57 +79,43 @@ p { color: #444; }
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
-  margin-top: 15px;
 }
 
 .day {
-  padding: 10px;
-  border-radius: 10px;
-  background: #fff0f5;
-  font-size: 14px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f3e8ff;
   cursor: pointer;
+  transition: 0.2s;
 }
-
+.day:hover {
+  background: #ddd6fe;
+}
 .day.selected {
-  background: #ff6fa1;
+  background: #8b5cf6;
   color: white;
 }
-
 .day.empty {
   background: transparent;
-  cursor: default;
 }
 
-/* AVATAR */
-.avatar-wrapper {
-  margin: 20px auto;
-  position: relative;
-  width: 120px;
-  height: 120px;
+/* SMALL TEXT */
+.small {
+  font-size: 13px;
+  color: #888;
+  margin-top: 8px;
 }
 
-.avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: #ffd1dc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  margin: auto;
+/* DANCE */
+.dance-avatar {
+  font-size: 60px;
+  margin: 20px 0;
+  animation: dance 0.6s infinite alternate;
 }
-
-.heart {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  font-size: 24px;
-  transition: 0.3s;
+@keyframes dance {
+  0% { transform: rotate(-10deg); }
+  100% { transform: rotate(10deg) translateY(-10px); }
 }
-
-/* ERROR */
-.small { font-size: 13px; color: #888; }
 </style>
 </head>
 
@@ -129,113 +123,136 @@ p { color: #444; }
 
 <div class="card">
 
-  <div class="progress">
-    <div class="bar" id="bar"></div>
-  </div>
+<!-- START -->
+<div id="start">
+  <h2>Hi love, happy birth month! 💜</h2>
+  <p>Will you go out with me to celebrate your birthday? 🥺</p>
+  <button class="option-btn" id="yesBtn" onclick="sayYes()">YES</button>
+  <button class="option-btn" id="noBtn" onclick="sayNo()">NO</button>
+</div>
 
-  <!-- START -->
-  <div id="start">
-    <h2>Hi love 💖</h2>
+<!-- EARLY CELEBRATION -->
+<div id="earlyCelebrate" style="display:none;">
+  <h2>AWWW YOU SAID YES 💜🥺</h2>
+  <div class="dance-avatar">🧸</div>
 
-    <div class="avatar-wrapper">
-      <div class="avatar">🧸</div>
-      <div class="heart" id="heart">🤍</div>
-    </div>
+  <button class="option-btn" onclick="continueGame()">
+    now that you said yes, let me give you a few options
+  </button>
+</div>
 
-    <p>Will you go out with me for your birthday? 🥺</p>
+<!-- ERROR -->
+<div id="error" style="display:none;">
+  <h2>⚠️ SYSTEM ERROR ⚠️</h2>
+  <p>system failed i guess</p>
+  <button class="option-btn" onclick="retryAsk()">restart system 💻</button>
+</div>
 
-    <button class="option-btn" onclick="sayYes()">YES 💕</button>
-    <button class="option-btn" onclick="sayNo()">NO 🙈</button>
-  </div>
+<!-- STEP 1 -->
+<div id="step1" style="display:none;">
+  <h2>Pick a date 🗓️</h2>
+  <div class="calendar" id="calendar"></div>
+  <p class="small">June 2026 💜</p>
+</div>
 
-  <!-- ERROR -->
-  <div id="error" style="display:none;">
-    <h2>⚠️ SYSTEM ERROR</h2>
-    <p style="white-space:pre-line;">
-ERROR 404: Date request not accepted.
+<!-- STEP 2 -->
+<div id="step2" style="display:none;">
+  <h2>Pick an activity 🎀</h2>
+  <button class="option-btn" onclick="pickActivity('Cafe ☕')">Cafe ☕</button>
+  <button class="option-btn" onclick="pickActivity('Movie 🎬')">Movie 🎬</button>
+  <button class="option-btn" onclick="pickActivity('Beach 🌊')">Beach 🌊</button>
+</div>
 
-Reason: "too much cuteness detected"
-Rebooting romance module...
-    </p>
+<!-- STEP 3 -->
+<div id="step3" style="display:none;">
+  <h2>Your plan 💜</h2>
 
-    <button class="option-btn" onclick="retryAsk()">restart system 💻</button>
-  </div>
+  <div id="summary" class="summary-card"></div>
 
-  <!-- CALENDAR -->
-  <div id="step1" style="display:none;">
-    <h2>Pick your birthday date 🗓️</h2>
-    <div class="calendar" id="calendar"></div>
-    <p class="small">June 2026 ✨</p>
-  </div>
+  <button class="option-btn" onclick="goBackToActivity()">⬅️ Change activity</button>
+  <button class="option-btn" onclick="goBackToCalendar()">📅 Change date</button>
 
-  <!-- ACTIVITY -->
-  <div id="step2" style="display:none;">
-    <h2>Pick our activity 🎀</h2>
+  <button class="option-btn" onclick="finalYes()">DONE ✅</button>
+</div>
 
-    <button class="option-btn" onclick="pickActivity('Cafe hopping ☕')">Cafe hopping ☕</button>
-    <button class="option-btn" onclick="pickActivity('Movie date 🎬')">Movie + snacks 🎬</button>
-    <button class="option-btn" onclick="pickActivity('Beach day 🌊')">Beach day 🌊</button>
-  </div>
-
-  <!-- SUMMARY -->
-  <div id="step3" style="display:none;">
-    <h2>Your Date Plan 💖</h2>
-
-    <p id="summary"></p>
-
-    <h3>So… will you go out with me? 🥺💘</h3>
-
-    <button class="option-btn" onclick="finalYes()">YES 💖</button>
-  </div>
-
-  <!-- FINAL -->
-  <div id="final" style="display:none;">
-    <h2>YAYYYY 💖🎉</h2>
-    <p id="finalText"></p>
-  </div>
+<!-- FINAL -->
+<div id="celebration" style="display:none;">
+  <h2>YAY I'M EXCOITEDDD, SEE YOU THEN!</h2>
+  <div class="dance-avatar">🥳🥳🥳</div>
+</div>
 
 </div>
 
 <script>
-
+let retryCount = 0;
 let chosenDate = "";
 let chosenActivity = "";
-let retryCount = 0;
-let heartLevel = 0;
 
-/* PROGRESS */
-function updateBar(p) {
-  document.getElementById("bar").style.width = p + "%";
-}
-
-/* START */
+/* FIRST YES */
 function sayYes() {
   document.getElementById("start").style.display = "none";
-  document.getElementById("step1").style.display = "block";
-  generateCalendar();
-  updateBar(25);
+  document.getElementById("earlyCelebrate").style.display = "block";
+
+  confetti({ particleCount: 120, spread: 80 });
+
+  document.body.classList.add("shake");
+  setTimeout(() => document.body.classList.remove("shake"), 500);
 }
 
+/* CONTINUE */
+function continueGame() {
+  document.getElementById("earlyCelebrate").style.display = "none";
+  document.getElementById("step1").style.display = "block";
+  generateCalendar();
+}
+
+/* NO */
 function sayNo() {
+  document.body.classList.add("error-mode");
   document.getElementById("start").style.display = "none";
   document.getElementById("error").style.display = "block";
 }
 
+/* RETRY */
 function retryAsk() {
   retryCount++;
 
+  document.body.classList.remove("error-mode");
   document.getElementById("error").style.display = "none";
   document.getElementById("start").style.display = "block";
 
+  // 💬 messages
   if (retryCount === 1) {
     document.querySelector("#start p").innerText =
       "Wait… system recovered 🥺 try again?";
   } else if (retryCount === 2) {
     document.querySelector("#start p").innerText =
-      "ok I am politely begging 🧎‍♀️";
+      "okay I am politely begging 🧎‍♀️";
   } else {
     document.querySelector("#start p").innerText =
-      "final attempt… I will be normal about this 😭";
+      "final attempt… I will be okay with anything 😭";
+  }
+
+  // 💜 grow YES
+  let yesBtn = document.getElementById("yesBtn");
+  yesBtn.style.transform = `scale(${1 + retryCount * 0.2})`;
+  yesBtn.style.fontSize = `${16 + retryCount * 2}px`;
+
+  let noBtn = document.getElementById("noBtn");
+
+  if (retryCount <= 2) {
+    noBtn.style.transform = `scale(${1 - retryCount * 0.1})`;
+  } else {
+    noBtn.style.display = "none";
+
+    if (!document.getElementById("noGoneMsg")) {
+      let msg = document.createElement("p");
+      msg.id = "noGoneMsg";
+      msg.innerText = "BUT IDK WHERE THE NO BUTTON WENT";
+      msg.style.color = "#8b5cf6";
+      msg.style.fontWeight = "bold";
+      document.getElementById("start").appendChild(msg);
+    }
   }
 }
 
@@ -244,24 +261,24 @@ function generateCalendar() {
   const calendar = document.getElementById("calendar");
   calendar.innerHTML = "";
 
-  const daysInJune = 30;
-  const startWeekday = 1;
+  const days = 30;
+  const startDay = 1;
 
-  for (let i = 0; i < startWeekday; i++) {
+  for (let i = 0; i < startDay; i++) {
     let empty = document.createElement("div");
     empty.className = "day empty";
     calendar.appendChild(empty);
   }
 
-  for (let d = 1; d <= daysInJune; d++) {
+  for (let d = 1; d <= days; d++) {
     let day = document.createElement("div");
     day.className = "day";
     day.innerText = d;
 
     day.onclick = () => {
-      document.querySelectorAll(".day").forEach(el =>
-        el.classList.remove("selected")
-      );
+      document.querySelectorAll(".day")
+        .forEach(el => el.classList.remove("selected"));
+
       day.classList.add("selected");
       pickDate(`June ${d}, 2026`);
     };
@@ -274,7 +291,6 @@ function pickDate(date) {
   chosenDate = date;
   document.getElementById("step1").style.display = "none";
   document.getElementById("step2").style.display = "block";
-  updateBar(55);
 }
 
 /* ACTIVITY */
@@ -284,51 +300,46 @@ function pickActivity(act) {
   document.getElementById("step2").style.display = "none";
   document.getElementById("step3").style.display = "block";
 
-  document.getElementById("summary").innerText =
-    "📅 " + chosenDate + "\n🎀 " + chosenActivity;
+  document.getElementById("summary").innerHTML = `
+    <div class="summary-item">
+      <span class="summary-icon">📅</span>
+      <span><span class="summary-title">Date:</span> ${chosenDate}</span>
+    </div>
 
-  updateBar(75);
+    <div class="summary-item">
+      <span class="summary-icon">🎀</span>
+      <span><span class="summary-title">Activity:</span> ${chosenActivity}</span>
+    </div>
+
+    <div class="summary-item">
+      <span class="summary-icon">💜</span>
+      <span>This is going to be such a cute day 🥺</span>
+    </div>
+  `;
 }
+``
 
-/* FINAL YES */
+/* FINAL */
 function finalYes() {
   document.getElementById("step3").style.display = "none";
-  document.getElementById("final").style.display = "block";
-  updateBar(100);
+  document.getElementById("celebration").style.display = "block";
 
-  document.getElementById("finalText").innerText =
-    "I can’t wait for us 💕";
+  confetti({ particleCount: 150, spread: 100 });
 
-  /* 🎉 CONFETTI */
-  confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-
-  setTimeout(() => {
-    confetti({ particleCount: 80, spread: 100, origin: { y: 0.4 } });
-  }, 300);
-
-  /* 💖 HEART GROWTH */
-  growHeart();
+  document.body.classList.add("shake");
+  setTimeout(() => document.body.classList.remove("shake"), 500);
 }
 
-/* HEART ANIMATION */
-function growHeart() {
-  const heart = document.getElementById("heart");
 
-  let emojis = ["🤍", "💗", "💖", "💘", "💞", "❤️"];
-
-  let interval = setInterval(() => {
-    if (heartLevel < emojis.length - 1) {
-      heartLevel++;
-      heart.innerText = emojis[heartLevel];
-
-      document.querySelector(".avatar").style.transform =
-        `scale(${1 + heartLevel * 0.08})`;
-    } else {
-      clearInterval(interval);
-    }
-  }, 300);
+function goBackToActivity() {
+  document.getElementById("step3").style.display = "none";
+  document.getElementById("step2").style.display = "block";
 }
 
+function goBackToCalendar() {
+  document.getElementById("step3").style.display = "none";
+  document.getElementById("step1").style.display = "block";
+}
 </script>
 
 </body>
