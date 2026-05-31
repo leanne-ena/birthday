@@ -154,6 +154,31 @@ h2 { color: #8b5cf6; }
     font-size: 14px;
   }
 }
+
+.custom-input {
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background: #f3e8ff;
+  box-sizing: border-box;
+}
+
+.details-link {
+  display: inline-block;
+  margin: 10px 0;
+  color: #8b5cf6;
+  font-weight: bold;
+}
+
+
+.details-link:hover {
+  text-decoration: underline;
+}
+
+
 </style>
 </head>
 
@@ -172,7 +197,7 @@ h2 { color: #8b5cf6; }
 <!-- EARLY CELEBRATION -->
 <div id="earlyCelebrate" style="display:none;">
   <h2>AWWW YOU SAID YES 💜🥺</h2>
-  <div class="dance-avatar">🧸</div>
+  <div class="dance-avatar">😂</div>
 
   <button class="option-btn" onclick="continueGame()">
     now that you said yes, let me give you a few options
@@ -196,9 +221,31 @@ h2 { color: #8b5cf6; }
 <!-- STEP 2 -->
 <div id="step2" style="display:none;">
   <h2>Pick an activity</h2>
-  <button class="option-btn" onclick="pickActivity('Cafe ☕')">Cafe ☕</button>
-  <button class="option-btn" onclick="pickActivity('Movie 🎬')">Movie 🎬</button>
-  <button class="option-btn" onclick="pickActivity('Beach 🌊')">Beach 🌊</button>
+
+<p>
+  <a href="date_activities.pdf" target="_blank" class="details-link">
+    View more details
+  </a>
+</p>
+
+
+<button class="option-btn" onclick="pickActivity('Movie 🎬')">Movie 🎬</button>
+<button class="option-btn" onclick="pickActivity('Theatre 🎭')">Theatre 🎭</button>
+<button class="option-btn" onclick="pickActivity('Museum 🏛️')">Museum 🏛️</button>
+<button class="option-btn" onclick="pickActivity('Painting 🎨')">Painting 🎨</button>
+
+  
+<input
+  type="text" 
+  id="customActivity" 
+  placeholder="or type your own activity" 
+  class="custom-input"
+>
+
+<button class="option-btn" onclick="useCustomActivity()">
+  Use the activity you typed
+</button>
+
 </div>
 
 <!-- STEP 3 -->
@@ -373,6 +420,15 @@ function goBackToCalendar() {
   document.getElementById("step3").style.display = "none";
   document.getElementById("step1").style.display = "block";
 }
+function useCustomActivity() {
+  let input = document.getElementById("customActivity").value.trim();
+
+  if (input !== "") {
+    pickActivity(input);
+  }
+}
+
+
 </script>
 
 </body>
