@@ -4,6 +4,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Birthday Date Game 💖</title>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <style>
 body {
   margin: 0;
@@ -12,10 +14,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
 }
 
-/* GAME CARD */
+/* CARD */
 .card {
   width: 90%;
   max-width: 420px;
@@ -24,18 +26,11 @@ body {
   padding: 25px;
   text-align: center;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  animation: fadeIn 0.4s ease;
 }
 
 /* TEXT */
-h2 {
-  color: #ff4d88;
-  margin-bottom: 10px;
-}
-
-p {
-  color: #444;
-}
+h2 { color: #ff4d88; }
+p { color: #444; }
 
 /* BUTTONS */
 .option-btn {
@@ -53,10 +48,9 @@ p {
 
 .option-btn:active {
   transform: scale(0.97);
-  background: #ff3d85;
 }
 
-/* PROGRESS BAR */
+/* PROGRESS */
 .progress {
   height: 8px;
   background: #eee;
@@ -72,17 +66,62 @@ p {
   transition: 0.3s;
 }
 
-/* ANIMATION */
-@keyframes fadeIn {
-  from {opacity: 0; transform: translateY(10px);}
-  to {opacity: 1; transform: translateY(0);}
+/* CALENDAR */
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-top: 15px;
 }
 
-/* SMALL TEXT */
-.small {
-  font-size: 13px;
-  color: #888;
+.day {
+  padding: 10px;
+  border-radius: 10px;
+  background: #fff0f5;
+  font-size: 14px;
+  cursor: pointer;
 }
+
+.day.selected {
+  background: #ff6fa1;
+  color: white;
+}
+
+.day.empty {
+  background: transparent;
+  cursor: default;
+}
+
+/* AVATAR */
+.avatar-wrapper {
+  margin: 20px auto;
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #ffd1dc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  margin: auto;
+}
+
+.heart {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 24px;
+  transition: 0.3s;
+}
+
+/* ERROR */
+.small { font-size: 13px; color: #888; }
 </style>
 </head>
 
@@ -94,51 +133,65 @@ p {
     <div class="bar" id="bar"></div>
   </div>
 
-  <!-- STEP 1 -->
-  <div id="step1">
+  <!-- START -->
+  <div id="start">
     <h2>Hi love 💖</h2>
-    <p>Pick your birthday date 🗓️</p>
 
-    <button class="option-btn" onclick="pickDate('June 10')">June 10</button>
-    <button class="option-btn" onclick="pickDate('June 11')">June 11</button>
-    <button class="option-btn" onclick="pickDate('June 12')">June 12</button>
-
-    <p class="small">Tap your perfect day ✨</p>
-  </div>
-
-  <!-- STEP 2 -->
-  <div id="step2" style="display:none;">
-    <h2>Nice choice 💕</h2>
-    <p>Now pick our activity 🎀</p>
-
-    <button class="option-btn" onclick="pickActivity('Cafe hopping ☕')">Cafe hopping ☕</button>
-    <button class="option-btn" onclick="pickActivity('Movie date 🎬')">Movie date 🎬</button>
-    <button class="option-btn" onclick="pickActivity('Beach day 🌊')">Beach day 🌊</button>
-
-    <p class="small">What feels like *us*? 🥺</p>
-  </div>
-
-  <!-- STEP 3 -->
-  <div id="step3" style="display:none;">
-    <h2>It’s ready 💖</h2>
-    <p>Here’s your birthday plan:</p>
-
-    <div style="background:#fff0f5; padding:15px; border-radius:15px;">
-      <p id="summary"></p>
+    <div class="avatar-wrapper">
+      <div class="avatar">🧸</div>
+      <div class="heart" id="heart">🤍</div>
     </div>
 
-    <h3 style="color:#ff4d88; margin-top:20px;">
-      So… will you go out with me? 🥺💘
-    </h3>
+    <p>Will you go out with me for your birthday? 🥺</p>
+
+    <button class="option-btn" onclick="sayYes()">YES 💕</button>
+    <button class="option-btn" onclick="sayNo()">NO 🙈</button>
+  </div>
+
+  <!-- ERROR -->
+  <div id="error" style="display:none;">
+    <h2>⚠️ SYSTEM ERROR</h2>
+    <p style="white-space:pre-line;">
+ERROR 404: Date request not accepted.
+
+Reason: "too much cuteness detected"
+Rebooting romance module...
+    </p>
+
+    <button class="option-btn" onclick="retryAsk()">restart system 💻</button>
+  </div>
+
+  <!-- CALENDAR -->
+  <div id="step1" style="display:none;">
+    <h2>Pick your birthday date 🗓️</h2>
+    <div class="calendar" id="calendar"></div>
+    <p class="small">June 2026 ✨</p>
+  </div>
+
+  <!-- ACTIVITY -->
+  <div id="step2" style="display:none;">
+    <h2>Pick our activity 🎀</h2>
+
+    <button class="option-btn" onclick="pickActivity('Cafe hopping ☕')">Cafe hopping ☕</button>
+    <button class="option-btn" onclick="pickActivity('Movie date 🎬')">Movie + snacks 🎬</button>
+    <button class="option-btn" onclick="pickActivity('Beach day 🌊')">Beach day 🌊</button>
+  </div>
+
+  <!-- SUMMARY -->
+  <div id="step3" style="display:none;">
+    <h2>Your Date Plan 💖</h2>
+
+    <p id="summary"></p>
+
+    <h3>So… will you go out with me? 🥺💘</h3>
 
     <button class="option-btn" onclick="finalYes()">YES 💖</button>
   </div>
 
-  <!-- FINAL SCREEN -->
+  <!-- FINAL -->
   <div id="final" style="display:none;">
     <h2>YAYYYY 💖🎉</h2>
-    <p>You just made my whole world brighter.</p>
-    <p id="finalText" style="font-weight:bold;"></p>
+    <p id="finalText"></p>
   </div>
 
 </div>
@@ -147,36 +200,133 @@ p {
 
 let chosenDate = "";
 let chosenActivity = "";
+let retryCount = 0;
+let heartLevel = 0;
 
-function updateBar(percent) {
-  document.getElementById("bar").style.width = percent + "%";
+/* PROGRESS */
+function updateBar(p) {
+  document.getElementById("bar").style.width = p + "%";
+}
+
+/* START */
+function sayYes() {
+  document.getElementById("start").style.display = "none";
+  document.getElementById("step1").style.display = "block";
+  generateCalendar();
+  updateBar(25);
+}
+
+function sayNo() {
+  document.getElementById("start").style.display = "none";
+  document.getElementById("error").style.display = "block";
+}
+
+function retryAsk() {
+  retryCount++;
+
+  document.getElementById("error").style.display = "none";
+  document.getElementById("start").style.display = "block";
+
+  if (retryCount === 1) {
+    document.querySelector("#start p").innerText =
+      "Wait… system recovered 🥺 try again?";
+  } else if (retryCount === 2) {
+    document.querySelector("#start p").innerText =
+      "ok I am politely begging 🧎‍♀️";
+  } else {
+    document.querySelector("#start p").innerText =
+      "final attempt… I will be normal about this 😭";
+  }
+}
+
+/* CALENDAR */
+function generateCalendar() {
+  const calendar = document.getElementById("calendar");
+  calendar.innerHTML = "";
+
+  const daysInJune = 30;
+  const startWeekday = 1;
+
+  for (let i = 0; i < startWeekday; i++) {
+    let empty = document.createElement("div");
+    empty.className = "day empty";
+    calendar.appendChild(empty);
+  }
+
+  for (let d = 1; d <= daysInJune; d++) {
+    let day = document.createElement("div");
+    day.className = "day";
+    day.innerText = d;
+
+    day.onclick = () => {
+      document.querySelectorAll(".day").forEach(el =>
+        el.classList.remove("selected")
+      );
+      day.classList.add("selected");
+      pickDate(`June ${d}, 2026`);
+    };
+
+    calendar.appendChild(day);
+  }
 }
 
 function pickDate(date) {
   chosenDate = date;
   document.getElementById("step1").style.display = "none";
   document.getElementById("step2").style.display = "block";
-  updateBar(33);
+  updateBar(55);
 }
 
-function pickActivity(activity) {
-  chosenActivity = activity;
+/* ACTIVITY */
+function pickActivity(act) {
+  chosenActivity = act;
+
   document.getElementById("step2").style.display = "none";
   document.getElementById("step3").style.display = "block";
 
   document.getElementById("summary").innerText =
-    "📅 Date: " + chosenDate + "\n🎀 Activity: " + chosenActivity;
+    "📅 " + chosenDate + "\n🎀 " + chosenActivity;
 
   updateBar(75);
 }
 
+/* FINAL YES */
 function finalYes() {
   document.getElementById("step3").style.display = "none";
   document.getElementById("final").style.display = "block";
   updateBar(100);
 
   document.getElementById("finalText").innerText =
-    "Our plan is officially locked in 💕\nI can’t wait for our date.";
+    "I can’t wait for us 💕";
+
+  /* 🎉 CONFETTI */
+  confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+
+  setTimeout(() => {
+    confetti({ particleCount: 80, spread: 100, origin: { y: 0.4 } });
+  }, 300);
+
+  /* 💖 HEART GROWTH */
+  growHeart();
+}
+
+/* HEART ANIMATION */
+function growHeart() {
+  const heart = document.getElementById("heart");
+
+  let emojis = ["🤍", "💗", "💖", "💘", "💞", "❤️"];
+
+  let interval = setInterval(() => {
+    if (heartLevel < emojis.length - 1) {
+      heartLevel++;
+      heart.innerText = emojis[heartLevel];
+
+      document.querySelector(".avatar").style.transform =
+        `scale(${1 + heartLevel * 0.08})`;
+    } else {
+      clearInterval(interval);
+    }
+  }, 300);
 }
 
 </script>
