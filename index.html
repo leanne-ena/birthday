@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Date Game 💖</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #ffe6f0, #fff0f5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* GAME CARD */
+.card {
+  width: 90%;
+  max-width: 420px;
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  animation: fadeIn 0.4s ease;
+}
+
+/* TEXT */
+h2 {
+  color: #ff4d88;
+  margin-bottom: 10px;
+}
+
+p {
+  color: #444;
+}
+
+/* BUTTONS */
+.option-btn {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 15px;
+  border-radius: 15px;
+  border: none;
+  font-size: 16px;
+  background: #ff6fa1;
+  color: white;
+  transition: 0.2s;
+}
+
+.option-btn:active {
+  transform: scale(0.97);
+  background: #ff3d85;
+}
+
+/* PROGRESS BAR */
+.progress {
+  height: 8px;
+  background: #eee;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  width: 0%;
+  background: #ff6fa1;
+  transition: 0.3s;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(10px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+/* SMALL TEXT */
+.small {
+  font-size: 13px;
+  color: #888;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <div class="progress">
+    <div class="bar" id="bar"></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div id="step1">
+    <h2>Hi love 💖</h2>
+    <p>Pick your birthday date 🗓️</p>
+
+    <button class="option-btn" onclick="pickDate('June 10')">June 10</button>
+    <button class="option-btn" onclick="pickDate('June 11')">June 11</button>
+    <button class="option-btn" onclick="pickDate('June 12')">June 12</button>
+
+    <p class="small">Tap your perfect day ✨</p>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="step2" style="display:none;">
+    <h2>Nice choice 💕</h2>
+    <p>Now pick our activity 🎀</p>
+
+    <button class="option-btn" onclick="pickActivity('Cafe hopping ☕')">Cafe hopping ☕</button>
+    <button class="option-btn" onclick="pickActivity('Movie date 🎬')">Movie date 🎬</button>
+    <button class="option-btn" onclick="pickActivity('Beach day 🌊')">Beach day 🌊</button>
+
+    <p class="small">What feels like *us*? 🥺</p>
+  </div>
+
+  <!-- STEP 3 -->
+  <div id="step3" style="display:none;">
+    <h2>It’s ready 💖</h2>
+    <p>Here’s your birthday plan:</p>
+
+    <div style="background:#fff0f5; padding:15px; border-radius:15px;">
+      <p id="summary"></p>
+    </div>
+
+    <h3 style="color:#ff4d88; margin-top:20px;">
+      So… will you go out with me? 🥺💘
+    </h3>
+
+    <button class="option-btn" onclick="finalYes()">YES 💖</button>
+  </div>
+
+  <!-- FINAL SCREEN -->
+  <div id="final" style="display:none;">
+    <h2>YAYYYY 💖🎉</h2>
+    <p>You just made my whole world brighter.</p>
+    <p id="finalText" style="font-weight:bold;"></p>
+  </div>
+
+</div>
+
+<script>
+
+let chosenDate = "";
+let chosenActivity = "";
+
+function updateBar(percent) {
+  document.getElementById("bar").style.width = percent + "%";
+}
+
+function pickDate(date) {
+  chosenDate = date;
+  document.getElementById("step1").style.display = "none";
+  document.getElementById("step2").style.display = "block";
+  updateBar(33);
+}
+
+function pickActivity(activity) {
+  chosenActivity = activity;
+  document.getElementById("step2").style.display = "none";
+  document.getElementById("step3").style.display = "block";
+
+  document.getElementById("summary").innerText =
+    "📅 Date: " + chosenDate + "\n🎀 Activity: " + chosenActivity;
+
+  updateBar(75);
+}
+
+function finalYes() {
+  document.getElementById("step3").style.display = "none";
+  document.getElementById("final").style.display = "block";
+  updateBar(100);
+
+  document.getElementById("finalText").innerText =
+    "Our plan is officially locked in 💕\nI can’t wait for our date.";
+}
+
+</script>
+
+</body>
+</html>
